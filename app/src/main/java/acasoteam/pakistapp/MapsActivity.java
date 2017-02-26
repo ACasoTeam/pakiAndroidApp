@@ -72,7 +72,6 @@ import acasoteam.pakistapp.entity.Paki;
 
 import com.facebook.FacebookSdk;
 
-
 public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback,
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
@@ -99,17 +98,23 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     FloatingActionButton fab2;
     CallbackManager callbackManager;
     BottomSheetBehavior bottomSheetBehavior;
-
+    Marker marker;
 
     @Override
     public boolean onMarkerClick(final Marker marker) {
         // set hideable or not
+
         bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+        marker.getTag();
+        Log.v("AntonioGay",Integer.toString(BottomSheetBehavior.STATE_EXPANDED));
         return true;
     }
 
     public void showBottomSheet(View v) {
-        bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+        if(bottomSheetBehavior.getState() == 4)
+            bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+        else if(bottomSheetBehavior.getState() == 3)
+            bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
     }
 
 
@@ -346,7 +351,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             pakis = myHelper.selectPakis(db);
 
             for (Paki paki : pakis){
-                mMap.addMarker(new MarkerOptions().position(new LatLng(paki.getLat(), paki.getLon())));
+                marker = mMap.addMarker(new MarkerOptions().position(new LatLng(paki.getLat(), paki.getLon())));
+                marker.setTag(paki.getIdPaki());
                 Log.v("MapsActivity","lat:"+paki.getLat()+", lon:"+paki.getLon());
             }
 
