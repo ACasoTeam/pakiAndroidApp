@@ -103,10 +103,24 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     public boolean onMarkerClick(final Marker marker) {
         // set hideable or not
+        try {
+            bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
 
-        bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
-        marker.getTag();
-        Log.v("AntonioGay",Integer.toString(BottomSheetBehavior.STATE_EXPANDED));
+
+            int idpaki = Integer.parseInt(marker.getTag().toString());
+            Paki paki = myHelper.selectPaki(db, idpaki);
+            Log.v ("MapsActivity", "idPaki:"+paki.getIdPaki());
+            Log.v ("MapsActivity", "avgrate:"+paki.getAvgRate());
+            Log.v ("MapsActivity", "NumVote:"+paki.getNumVote());
+            Log.v ("MapsActivity", "lat:"+paki.getLat());
+            Log.v ("MapsActivity", "lon:"+paki.getLon());
+
+            PakiDao pakidao = new PakiDao();
+
+            pakidao.getFeedback(idpaki, this);
+        } catch (Exception e) {
+            Log.v ("MapsActivity", "exception: "+e.getMessage());
+        }
         return true;
     }
 
@@ -370,9 +384,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
     }
 
-        {
 
-        }
 
     protected synchronized void buildGoogleApiClient() {
         mGoogleApiClient = new GoogleApiClient.Builder(this)

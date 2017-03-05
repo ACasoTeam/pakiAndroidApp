@@ -104,14 +104,7 @@ public class DBHelper extends SQLiteOpenHelper {
     public List<Paki> selectPakis(SQLiteDatabase db) throws JSONException {
 
         db.beginTransaction();
-
-        /*
-
-        JSONObject paki = new JSONObject(res);
-
-        //  JSONObject paki = null;
-        JSONArray pakis = paki.getJSONArray("pakis");
-*/      List<Paki> pakis = new ArrayList<>();
+        List<Paki> pakis = new ArrayList<>();
         try {
 
             Cursor c = db.rawQuery("SELECT * FROM "+PakiTable.TABLE_NAME, null);
@@ -132,16 +125,8 @@ public class DBHelper extends SQLiteOpenHelper {
                     Log.v("dbhelper","aggiunto paki in pakis!");
 
                 } while (c.moveToNext());
-
-
-
             }
-
             db.setTransactionSuccessful();
-
-
-
-
         } catch (Exception e) {
             //Error in between database transaction
             e.printStackTrace();
@@ -149,11 +134,40 @@ public class DBHelper extends SQLiteOpenHelper {
         } finally {
             db.endTransaction();
         }
-
-
         return pakis;
     }
 
+    public Paki selectPaki(SQLiteDatabase db, int idPaki) throws JSONException {
+        Paki paki = null;
+        db.beginTransaction();
+        try {
+
+            Cursor c = db.rawQuery( "SELECT *" +
+                                    " FROM "+PakiTable.TABLE_NAME +
+                                    " WHERE "+PakiTable.COLUMN_IDPAKI + " = " + idPaki, null);
+            Log.v("dbhelper","eseguito selectPaki");
+
+            if (c.moveToFirst()) {
+
+                paki = new Paki(c.getInt(c.getColumnIndex("idPaki")),
+                        c.getString(c.getColumnIndex("name")),
+                        c.getString(c.getColumnIndex("address")),
+                        c.getDouble(c.getColumnIndex("lat")),
+                        c.getDouble(c.getColumnIndex("lon")),
+                        c.getDouble(c.getColumnIndex("avgRate")),
+                        c.getInt(c.getColumnIndex("numVote")));
+
+            }
+            db.setTransactionSuccessful();
+        } catch (Exception e) {
+            //Error in between database transaction
+            e.printStackTrace();
+            return null;
+        } finally {
+            db.endTransaction();
+        }
+        return paki;
+    }
 
 
 }

@@ -10,6 +10,7 @@ import org.json.JSONException;
 
 import java.util.List;
 
+import acasoteam.pakistapp.asynktask.GetFeedback;
 import acasoteam.pakistapp.database.DBHelper;
 import acasoteam.pakistapp.entity.Paki;
 
@@ -74,6 +75,20 @@ public class PakiDao {
 
     private static double deg2rad(double deg) {
         return (deg * Math.PI / 180.0);
+    }
+
+    public boolean getFeedback (int idPaki, Context context){
+
+        String u = "https://acaso-pakistapp.rhcloud.com/PakiOperation?action=pakiFeedback&idpaki="+idPaki;
+        try {
+            new GetFeedback(context).execute(u);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+
+        return true;
     }
 
 

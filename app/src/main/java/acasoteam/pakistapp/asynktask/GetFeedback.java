@@ -40,6 +40,7 @@ public class GetFeedback extends AsyncTask<String, Void, Void> {
         try {
             HttpURLConnection urlConnection = null;
             URL url = new URL(urls[0]);
+            Log.v("GetFeedback","urls[0]:"+urls[0]);
             urlConnection = (HttpURLConnection) url.openConnection();
             urlConnection.setRequestMethod("POST");
 
@@ -90,6 +91,7 @@ public class GetFeedback extends AsyncTask<String, Void, Void> {
         // TODO: do something with the feed
 
         CharSequence text = "";
+        Log.v("GetFeedback","res:"+res);
 
         if (res.trim().equals("0") || res.trim().equals("-1")){
             text = "Si è verificato qalche problema";
@@ -99,6 +101,7 @@ public class GetFeedback extends AsyncTask<String, Void, Void> {
             toast.show();
         } else {
             try {
+
                 JSONArray feedbacks = new JSONArray(res);
                 JSONObject feedback;
                 for (int i = 0; i < feedbacks.length(); i++) {
