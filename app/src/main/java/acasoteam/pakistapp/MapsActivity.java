@@ -40,9 +40,14 @@ import com.facebook.login.widget.LoginButton;
 import com.facebook.share.Sharer;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.places.AutocompleteFilter;
+import com.google.android.gms.location.places.Place;
+import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
+import com.google.android.gms.location.places.ui.PlaceSelectionListener;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -50,6 +55,7 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.GoogleMap.OnMarkerClickListener;
@@ -332,6 +338,39 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         } catch (ExecutionException e) {
             e.printStackTrace();
         }*/
+
+        PlaceAutocompleteFragment autocompleteFragment = (PlaceAutocompleteFragment)
+                getFragmentManager().findFragmentById(R.id.place_autocomplete_fragment);
+
+
+        AutocompleteFilter typeFilter = new AutocompleteFilter.Builder()
+                .setTypeFilter(AutocompleteFilter.TYPE_FILTER_ADDRESS)
+                .build();
+
+        autocompleteFragment.setFilter(typeFilter);
+
+
+        autocompleteFragment.setBoundsBias(new LatLngBounds(
+                new LatLng(44.98034238084972, 7.49267578125),
+                new LatLng(45.1278045274732, 7.804412841796875)));
+
+
+
+        autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
+            @Override
+            public void onPlaceSelected(Place place) {
+                // TODO: Get info about the selected place.
+                Log.v("MapsActivity", "Place: " + place.getName());
+                LatLng PlatLng = place.getLatLng();
+                mMap.animateCamera(CameraUpdateFactory.newLatLng(PlatLng));
+            }
+
+            @Override
+            public void onError(Status status) {
+                // TODO: Handle the error.
+                Log.v("MapsActivity", "An error occurred: " + status);
+            }
+        });
 
     }
 
