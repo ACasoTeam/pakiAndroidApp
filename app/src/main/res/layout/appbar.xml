@@ -12,7 +12,8 @@
             android:layout_height="wrap_content"
             android:src="@drawable/ic_menu_white_24dp"
             android:background="@drawable/imagebutton_background"
-            android:layout_centerVertical="true"/>
+            android:layout_centerVertical="true"
+            android:onClick="search"/>
 
 
         <ImageButton
