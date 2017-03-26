@@ -9,6 +9,7 @@ import android.content.pm.PackageManager;
 import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
 import android.location.LocationManager;
+import android.net.Uri;
 import android.os.Build;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
@@ -707,6 +708,24 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         } catch (GooglePlayServicesNotAvailableException e) {
             // TODO: Handle the error.
         }
+    }
+
+    //nuovo codice
+
+    public void navigator(View view){
+        String mLat = "44.98034238084972";
+        String mLong ="7.49267578125";
+        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("google.navigation:q=" +mLat+","+mLong));
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
+    }
+
+
+    public void startNavigation(double lat, double lon){
+        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("google.navigation:q=" +lat+","+lon));
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
+
     }
 
 
