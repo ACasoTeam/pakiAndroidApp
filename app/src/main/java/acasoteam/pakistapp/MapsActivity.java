@@ -22,6 +22,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RatingBar;
 import android.widget.Toast;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomSheetBehavior;
@@ -105,6 +106,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     CallbackManager callbackManager;
     BottomSheetBehavior bottomSheetBehavior;
     Marker marker;
+    RatingBar rb;
 
     @Override
     public boolean onMarkerClick(final Marker marker) {
@@ -209,6 +211,19 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             }
         });*/
 
+        rb=(RatingBar)findViewById(R.id.ratingBar);
+
+        rb.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener(){
+
+            @Override
+            public void onRatingChanged(RatingBar ratingBar, float rating,
+                                        boolean fromUser) {
+                // TODO Auto-generated method stub
+                Toast.makeText(getApplicationContext(),Float.toString(rating),Toast.LENGTH_LONG).show();
+
+            }
+
+        });
 
         // Callback registration
         LoginManager.getInstance().registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
