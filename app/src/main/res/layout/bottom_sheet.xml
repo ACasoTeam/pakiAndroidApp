@@ -12,7 +12,7 @@
     app:layout_behavior="android.support.design.widget.BottomSheetBehavior">
 
     <RatingBar
-        android:style="@style/beerRatingBar"
+        style="@style/beerRatingBar"
         android:id="@+id/ratingBar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
