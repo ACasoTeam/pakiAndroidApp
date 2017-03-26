@@ -16,6 +16,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.widget.TextViewCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.AttributeSet;
@@ -24,6 +25,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RatingBar;
+import android.widget.TextView;
 import android.widget.Toast;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomSheetBehavior;
@@ -110,6 +112,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     CallbackManager callbackManager;
     BottomSheetBehavior bottomSheetBehavior;
     Marker marker;
+
+    TextView address;
     RatingBar rb;
 
     @Override
@@ -129,7 +133,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
             PakiDao pakidao = new PakiDao();
 
-            pakidao.getFeedback(idpaki, this);
+            pakidao.getInfo(idpaki, this);
         } catch (Exception e) {
             Log.v ("MapsActivity", "exception: "+e.getMessage());
         }
@@ -234,7 +238,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         });*/
 
         rb=(RatingBar)findViewById(R.id.ratingBar);
-
+        address = (TextView)findViewById(R.id.address);
         rb.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener(){
 
             @Override
@@ -739,6 +743,23 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             startActivity(mapIntent);
         }
 
+    }
+
+
+    public TextView getAddress() {
+        return address;
+    }
+
+    public void setAddress(TextView address) {
+        this.address = address;
+    }
+
+    public RatingBar getRb() {
+        return rb;
+    }
+
+    public void setRb(RatingBar rb) {
+        this.rb = rb;
     }
 
 }

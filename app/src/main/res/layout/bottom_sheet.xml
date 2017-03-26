@@ -27,7 +27,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
             android:textSize="22sp"
-            android:id="@+id/click"
+            android:id="@+id/address"
             android:text="via le dita dal naso 167"
             android:textColor="@android:color/white" />
 

@@ -11,6 +11,7 @@ import org.json.JSONException;
 import java.util.List;
 
 import acasoteam.pakistapp.asynktask.GetFeedback;
+import acasoteam.pakistapp.asynktask.GetInfo;
 import acasoteam.pakistapp.database.DBHelper;
 import acasoteam.pakistapp.entity.Paki;
 
@@ -82,6 +83,20 @@ public class PakiDao {
         String u = "https://acaso-pakistapp.rhcloud.com/PakiOperation?action=pakiFeedback&idpaki="+idPaki;
         try {
             new GetFeedback(context).execute(u);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+
+        return true;
+    }
+
+    public boolean getInfo (int idPaki, Context context){
+
+        String u = "https://acaso-pakistapp.rhcloud.com/PakiOperation?action=pakiInfo&idpaki="+idPaki;
+        try {
+            new GetInfo(context).execute(u);
 
         } catch (Exception e) {
             e.printStackTrace();
