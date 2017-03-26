@@ -698,7 +698,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
 
             Intent intent =
-                    new PlaceAutocomplete.IntentBuilder(PlaceAutocomplete.MODE_OVERLAY)
+                    new PlaceAutocomplete.IntentBuilder(PlaceAutocomplete.MODE_FULLSCREEN)
                             .setFilter(typeFilter)
                             .setBoundsBias(bound)
                             .build(this);
@@ -713,20 +713,32 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     //nuovo codice
 
     public void navigator(View view){
-        String mLat = "44.98034238084972";
-        String mLong ="7.49267578125";
-        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("google.navigation:q=" +mLat+","+mLong));
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(intent);
+        //tutto temporaneo
+        double mLat = 44.98034238084972;
+        double mLong =7.49267578125;
+        startNavigation(mLat,mLong);
     }
 
 
     public void startNavigation(double lat, double lon){
+        /*
         Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("google.navigation:q=" +lat+","+lon));
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);*/
+
+        /*
+        String uri = String.format(Locale.ENGLISH, "geo:%f,%f", lat, lon);
+        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
         startActivity(intent);
+*/
+
+        Uri gmmIntentUri = Uri.parse("geo:"+lat+","+lon+"z=25");
+        Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
+        mapIntent.setPackage("com.google.android.apps.maps");
+        if (mapIntent.resolveActivity(getPackageManager()) != null) {
+            startActivity(mapIntent);
+        }
 
     }
-
 
 }
