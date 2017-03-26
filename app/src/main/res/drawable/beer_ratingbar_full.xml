@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:id="@+id/background"
-        android:drawable="@drawable/com_facebook_auth_dialog_background" />
+        android:drawable="@drawable/beer_ratingbar_empty" />
     <item android:id="@+id/secondaryProgress"
-        android:drawable="@drawable/cast_ic_expanded_controller_forward30" />
+        android:drawable="@drawable/beer_ratingbar_empty" />
     <item android:id="@+id/progress"
-        android:drawable="@drawable/ic_pause_light" />
+        android:drawable="@drawable/beer_ratingbar_full_filled" />
 </layer-list>
