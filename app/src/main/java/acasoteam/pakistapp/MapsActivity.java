@@ -40,6 +40,8 @@ import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.facebook.share.Sharer;
 import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
+import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.LocationListener;
@@ -47,6 +49,7 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.places.AutocompleteFilter;
 import com.google.android.gms.location.places.Place;
+import com.google.android.gms.location.places.ui.PlaceAutocomplete;
 import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
 import com.google.android.gms.location.places.ui.PlaceSelectionListener;
 import com.google.android.gms.maps.CameraUpdate;
@@ -145,7 +148,25 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data)
     {
-        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == PLACE_AUTOCOMPLETE_REQUEST_CODE) {
+            if (resultCode == RESULT_OK) {
+                Place place = PlaceAutocomplete.getPlace(this, data);
+                Log.v("MapsActivity", "Place: " + place.getName());
+                LatLng PlatLng = place.getLatLng();
+                mMap.animateCamera(CameraUpdateFactory.newLatLng(PlatLng));
+            } else if (resultCode == PlaceAutocomplete.RESULT_ERROR) {
+                Status status = PlaceAutocomplete.getStatus(this, data);
+                // TODO: Handle the error.
+                Log.i("LOG", status.getStatusMessage());
+
+            } else if (resultCode == RESULT_CANCELED) {
+                // The user canceled the operation.
+            }
+        }
+
+
+        //super.onActivityResult(requestCode, resultCode, data);
        /* if (resultCode == RESULT_OK)
         {
             Log.v("MapsActivity","onSuccess");
@@ -159,7 +180,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             Log.v("MapsActivity","else");
 
         }*/
-        callbackManager.onActivityResult(requestCode, resultCode, data);
+       // callbackManager.onActivityResult(requestCode, resultCode, data);
 
     }
 
@@ -184,8 +205,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         LinearLayout llBottomSheet = (LinearLayout) findViewById(R.id.bottom_sheet);
 
         // init the bottom sheet behavior
-      bottomSheetBehavior = BottomSheetBehavior.from(llBottomSheet);
-      bottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
+        bottomSheetBehavior = BottomSheetBehavior.from(llBottomSheet);
+        bottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
 
         /*// change the state of the bottom sheet
         bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
@@ -354,6 +375,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             e.printStackTrace();
         }*/
 
+/*
+
         PlaceAutocompleteFragment autocompleteFragment = (PlaceAutocompleteFragment)
                 getFragmentManager().findFragmentById(R.id.place_autocomplete_fragment);
 
@@ -367,10 +390,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         autocompleteFragment.setBoundsBias(new LatLngBounds(
                 new LatLng(44.98034238084972, 7.49267578125),
-                new LatLng(45.1278045274732, 7.804412841796875)));
+                new LatLng(45.1278045274732, 7.804412841796875)));*/
 
 
-
+/*
         autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
             @Override
             public void onPlaceSelected(Place place) {
@@ -385,7 +408,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 // TODO: Handle the error.
                 Log.v("MapsActivity", "An error occurred: " + status);
             }
-        });
+        });*/
 
     }
 
@@ -655,6 +678,36 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         return bestLocation;
     }
 
+    int PLACE_AUTOCOMPLETE_REQUEST_CODE = 1;
+
+    public void search(View view){
+
+        try {
+
+            AutocompleteFilter typeFilter = new AutocompleteFilter.Builder()
+                    .setTypeFilter(AutocompleteFilter.TYPE_FILTER_ADDRESS)
+                    .build();
+
+
+
+
+            LatLngBounds bound = new LatLngBounds(
+                    new LatLng(44.98034238084972, 7.49267578125),
+                    new LatLng(45.1278045274732, 7.804412841796875));
+
+
+            Intent intent =
+                    new PlaceAutocomplete.IntentBuilder(PlaceAutocomplete.MODE_OVERLAY)
+                            .setFilter(typeFilter)
+                            .setBoundsBias(bound)
+                            .build(this);
+            startActivityForResult(intent, PLACE_AUTOCOMPLETE_REQUEST_CODE);
+        } catch (GooglePlayServicesRepairableException e) {
+            // TODO: Handle the error.
+        } catch (GooglePlayServicesNotAvailableException e) {
+            // TODO: Handle the error.
+        }
+    }
 
 
 }
