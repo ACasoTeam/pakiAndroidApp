@@ -19,11 +19,14 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.TextViewCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -77,6 +80,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
+import acasoteam.pakistapp.Adapter.CommentAdapter;
 import acasoteam.pakistapp.asynktask.GetAddress;
 import acasoteam.pakistapp.asynktask.GetJson;
 import acasoteam.pakistapp.database.DBHelper;
@@ -112,9 +116,15 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     CallbackManager callbackManager;
     BottomSheetBehavior bottomSheetBehavior;
     Marker marker;
+    ProgressBar spinBar;
 
     TextView address;
     RatingBar rb;
+
+    int idpaki;
+
+    RecyclerView rv;
+    CommentAdapter adapter;
 
     @Override
     public boolean onMarkerClick(final Marker marker) {
@@ -123,7 +133,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
 
 
-            int idpaki = Integer.parseInt(marker.getTag().toString());
+            idpaki = Integer.parseInt(marker.getTag().toString());
             Paki paki = myHelper.selectPaki(db, idpaki);
             Log.v ("MapsActivity", "idPaki:"+paki.getIdPaki());
             Log.v ("MapsActivity", "avgrate:"+paki.getAvgRate());
@@ -131,9 +141,11 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             Log.v ("MapsActivity", "lat:"+paki.getLat());
             Log.v ("MapsActivity", "lon:"+paki.getLon());
 
+            String address = paki.getAddress();
+
             PakiDao pakidao = new PakiDao();
 
-            pakidao.getInfo(idpaki, this);
+            pakidao.getInfo(idpaki, address, this);
         } catch (Exception e) {
             Log.v ("MapsActivity", "exception: "+e.getMessage());
         }
@@ -141,10 +153,20 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     public void showBottomSheet(View v) {
-        if(bottomSheetBehavior.getState() == 4)
+
+        if(bottomSheetBehavior.getState() == 4) {
             bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+            PakiDao pakidao = new PakiDao();
+
+            if (idpaki != 0) {
+                pakidao.getFeedback(idpaki, this);
+            }
+        }
         else if(bottomSheetBehavior.getState() == 3)
             bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+
+
+
     }
 
 
@@ -191,6 +213,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        setTheme(R.style.AppTheme);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
         activity = this;
@@ -239,6 +262,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         rb=(RatingBar)findViewById(R.id.ratingBar);
         address = (TextView)findViewById(R.id.address);
+        spinBar = (ProgressBar) findViewById(R.id.spinBar);
+        rv = (RecyclerView) findViewById(R.id.comments);
+        adapter = new CommentAdapter(null, this);
+
         rb.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener(){
 
             @Override
@@ -344,12 +371,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 SharedPreferences.Editor editor = getSharedPreferences("session", MODE_PRIVATE).edit();
                 editor.putInt("version", res.has("version")?res.getInt("version"):0);
                 editor.commit();
-
-                //PROVA
-
-
-
-
 
                 myHelper.createDB(db, jPakis);
             }
@@ -714,37 +735,23 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
     }
 
-    //nuovo codice
-
     public void navigator(View view){
         //tutto temporaneo
-        double mLat = 44.98034238084972;
-        double mLong =7.49267578125;
+        double mLat = 45.07;
+        double mLong =7.68;
         startNavigation(mLat,mLong);
     }
 
 
     public void startNavigation(double lat, double lon){
-        /*
-        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("google.navigation:q=" +lat+","+lon));
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(intent);*/
 
-        /*
-        String uri = String.format(Locale.ENGLISH, "geo:%f,%f", lat, lon);
-        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
-        startActivity(intent);
-*/
-
-        Uri gmmIntentUri = Uri.parse("geo:"+lat+","+lon+"z=25");
-        Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
-        mapIntent.setPackage("com.google.android.apps.maps");
+        Intent mapIntent = new Intent(android.content.Intent.ACTION_VIEW,
+                Uri.parse("http://maps.google.com/maps?daddr="+lat+","+lon));
         if (mapIntent.resolveActivity(getPackageManager()) != null) {
             startActivity(mapIntent);
         }
 
     }
-
 
     public TextView getAddress() {
         return address;
@@ -760,6 +767,30 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     public void setRb(RatingBar rb) {
         this.rb = rb;
+    }
+
+    public ProgressBar getSpinBar() {
+        return spinBar;
+    }
+
+    public void setSpinBar(ProgressBar spinBar) {
+        this.spinBar = spinBar;
+    }
+
+    public RecyclerView getRv() {
+        return rv;
+    }
+
+    public void setRv(RecyclerView rv) {
+        this.rv = rv;
+    }
+
+    public CommentAdapter getAdapter() {
+        return adapter;
+    }
+
+    public void setAdapter(CommentAdapter adapter) {
+        this.adapter = adapter;
     }
 
 }

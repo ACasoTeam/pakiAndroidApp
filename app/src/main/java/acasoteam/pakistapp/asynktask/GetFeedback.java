@@ -2,6 +2,8 @@ package acasoteam.pakistapp.asynktask;
 
 import android.content.Context;
 import android.os.AsyncTask;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.Gravity;
 import android.widget.Toast;
@@ -9,12 +11,20 @@ import android.widget.Toast;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.w3c.dom.Comment;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
+
+import acasoteam.pakistapp.Adapter.CommentAdapter;
+import acasoteam.pakistapp.MapsActivity;
+import acasoteam.pakistapp.R;
+import acasoteam.pakistapp.Utility.SingleComment;
 
 /**
  * Created by andre on 18/12/2016.
@@ -104,11 +114,37 @@ public class GetFeedback extends AsyncTask<String, Void, Void> {
 
                 JSONArray feedbacks = new JSONArray(res);
                 JSONObject feedback;
-                for (int i = 0; i < feedbacks.length(); i++) {
-                    feedback = feedbacks.getJSONObject(i);
 
-                    //todo: inserire le informazioni sul div...
+
+
+                if (context instanceof MapsActivity) {
+
+                    List<SingleComment> comments = new ArrayList<>();
+
+                    for (int i = 0; i < feedbacks.length(); i++) {
+                        feedback = feedbacks.getJSONObject(i);
+                        comments.add(new SingleComment(feedback.getString("name"),feedback.getInt("score"),feedback.getString("comment")));
+                        Log.v("GetFeedback","nuovo commento inserito, name: " + feedback.getString("name")
+                                + ", score: " + feedback.getInt("score")
+                                + ", comment: " + feedback.getString("comment")
+                        );
+                    }
+
+                    CommentAdapter adapter = new CommentAdapter(comments, context);
+                    LinearLayoutManager llm = new LinearLayoutManager(context);
+                    ((MapsActivity)context).getRv().setLayoutManager(llm);
+                    ((MapsActivity)context).getRv().setHasFixedSize(true);
+                    ((MapsActivity)context).getRv().setAdapter(adapter);
+                    //((MapsActivity)context).getAdapter().notifyDataSetChanged();
+                    Log.v("GetFeedback","dopo il setAdapter");
+
+
+
+
+
+
                 }
+
 
 
             } catch (JSONException e) {

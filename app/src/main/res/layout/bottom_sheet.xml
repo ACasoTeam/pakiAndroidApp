@@ -21,7 +21,6 @@
         android:clickable="true"
         >
 
-
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -30,6 +29,17 @@
             android:id="@+id/address"
             android:text="via le dita dal naso 167"
             android:textColor="@android:color/white" />
+
+        <ProgressBar
+            android:id="@+id/spinBar"
+            style="?android:attr/progressBarStyleLarge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:visibility="gone"
+            android:indeterminateDrawable="@drawable/progress" >
+        </ProgressBar>
 
         <RatingBar
             android:id="@+id/ratingBar"
@@ -43,11 +53,22 @@
     </LinearLayout>
 
 
-    <TextView
+    <android.support.design.widget.CoordinatorLayout
+        android:id="@+id/main_content"
+        xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center"
-        android:text="SSSSSSSS"
-        android:textColor="@color/colorAccent" />
+        android:layout_height="wrap_content">
+
+        <android.support.v7.widget.RecyclerView android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/comments"
+            xmlns:android="http://schemas.android.com/apk/res/android" />
+
+    </android.support.design.widget.CoordinatorLayout>
+
+
+
+
+
 
 </LinearLayout>

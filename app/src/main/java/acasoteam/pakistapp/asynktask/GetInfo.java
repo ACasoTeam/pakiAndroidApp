@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.View;
 import android.widget.Toast;
 
 import org.json.JSONArray;
@@ -26,16 +27,16 @@ public class GetInfo extends AsyncTask<String, Void, Void> {
 
     private Exception exception;
 
-    String res;
+    String res, address;
 
 
     BufferedReader reader = null;
 
     Context context;
 
-    public GetInfo(Context activity) {
+    public GetInfo(Context activity, String address) {
         this.context = activity;
-
+        this.address = address;
     }
 
     protected Void doInBackground(String... urls) {
@@ -88,9 +89,26 @@ public class GetInfo extends AsyncTask<String, Void, Void> {
     }
 
     @Override
+    protected void onPreExecute(){
+        if (context instanceof MapsActivity) {
+            ((MapsActivity)context).getSpinBar().setVisibility(View.VISIBLE);
+            ((MapsActivity)context).getRb().setVisibility(View.GONE);
+            //todo: cambiare lo split
+            if (address != null){
+                ((MapsActivity)context).getAddress().setText(address.split(",")[0]);
+            }
+        }
+    }
+
+    @Override
     protected void onPostExecute(Void v) {
         // TODO: check this.exception
         // TODO: do something with the feed
+
+        if (context instanceof MapsActivity) {
+            ((MapsActivity)context).getSpinBar().setVisibility(View.GONE);
+            ((MapsActivity)context).getRb().setVisibility(View.VISIBLE);
+        }
 
         CharSequence text = "";
         Log.v("GetInfo","res:"+res);
@@ -113,8 +131,7 @@ public class GetInfo extends AsyncTask<String, Void, Void> {
                 if (context instanceof MapsActivity) {
 
                     ((MapsActivity)context).getRb().setRating((float)feedbacks.getDouble("avgRate"));
-                    //todo: cambiare lo split
-                    ((MapsActivity)context).getAddress().setText(feedbacks.getString("address").split(",")[0]);
+
 
                 }
 

@@ -17,5 +17,9 @@
             <item name="android:maxHeight">25dip</item>
      </style>
 
+    <style name="splashScreenTheme" parent="@android:style/Theme.DeviceDefault.Light.NoActionBar">
+        <item name="android:windowBackground">@drawable/paki_img</item>
+    </style>
+
 
 </resources>

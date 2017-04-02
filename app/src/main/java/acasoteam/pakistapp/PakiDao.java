@@ -92,11 +92,11 @@ public class PakiDao {
         return true;
     }
 
-    public boolean getInfo (int idPaki, Context context){
+    public boolean getInfo (int idPaki, String address, Context context){
 
         String u = "https://acaso-pakistapp.rhcloud.com/PakiOperation?action=pakiInfo&idpaki="+idPaki;
         try {
-            new GetInfo(context).execute(u);
+            new GetInfo(context, address).execute(u);
 
         } catch (Exception e) {
             e.printStackTrace();
