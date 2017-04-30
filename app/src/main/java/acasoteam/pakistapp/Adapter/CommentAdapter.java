@@ -62,19 +62,41 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.SingleCo
     @Override
     public SingleCommentViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
         Log.v("CommentAdapter","onCreateViewHolder");
-        View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.user_comment_row, viewGroup, false);
-        SingleCommentViewHolder pvh = new SingleCommentViewHolder(v);
+        Log.v("CommentAdapter","i:"+i);
+
+        SingleCommentViewHolder pvh;
+        if (i == 0){
+            View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.add_rating_comment, viewGroup, false);
+            pvh = new SingleCommentViewHolder(v);
+        } else {
+            View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.user_comment_row, viewGroup, false);
+            pvh = new SingleCommentViewHolder(v);
+        }
+
         return pvh;
     }
 
+    @Override
+    public int getItemViewType(int position) {
+        if (position == 0) {
+            return 0;
+        } else {
+            return 1;
+        }
+    }
 
     @Override
     public void onBindViewHolder(final SingleCommentViewHolder singleCommentViewHolder, int i) {
         Log.v("CommentAdapter","onBindViewHolder");
-        singleCommentViewHolder.name.setText(singlecomments.get(i).getName());
-        singleCommentViewHolder.rb.setRating(singlecomments.get(i).getRate());
-        singleCommentViewHolder.comment.setText(singlecomments.get(i).getComment());
+        Log.v("CommentAdapter","i:"+i);
+        final int itemType = getItemViewType(i);
 
+
+        if (i != 0){
+            singleCommentViewHolder.name.setText(singlecomments.get(i).getName());
+            singleCommentViewHolder.rb.setRating(singlecomments.get(i).getRate());
+            singleCommentViewHolder.comment.setText(singlecomments.get(i).getComment());
+        }
     }
 
     @Override

@@ -120,7 +120,7 @@ public class GetFeedback extends AsyncTask<String, Void, Void> {
                 if (context instanceof MapsActivity) {
 
                     List<SingleComment> comments = new ArrayList<>();
-
+                    comments.add(new SingleComment("",0,""));
                     for (int i = 0; i < feedbacks.length(); i++) {
                         feedback = feedbacks.getJSONObject(i);
                         comments.add(new SingleComment(feedback.getString("name"),feedback.getInt("score"),feedback.getString("comment")));

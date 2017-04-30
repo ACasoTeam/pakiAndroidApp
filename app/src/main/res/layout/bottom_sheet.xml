@@ -84,61 +84,14 @@
         android:layout_height="wrap_content">
         <!--android:layout_below="@+id/rateLayout">-->
 
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
 
-        <LinearLayout
-            android:id="@+id/rateLayout"
+
+
+
+        <ScrollView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
-
-            <View
-                android:layout_marginTop="8dp"
-                android:layout_width="match_parent"
-                android:layout_height="1px"
-                android:background="@android:color/darker_gray"/>
-
-            <TextView
-                android:gravity="center"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="8dp"
-                android:textStyle="bold"
-                android:id="@+id/clue1"
-                android:text="Valuta e recensisci"
-                android:textColor="@android:color/darker_gray" />
-
-            <TextView
-                android:gravity="center"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="4dp"
-                android:id="@+id/clue"
-                android:text="Racconta a tutti la tua esperienza"
-                android:textColor="@android:color/darker_gray" />
-
-            <RatingBar
-                android:layout_marginTop="4dp"
-                android:layout_gravity="center"
-                android:id="@+id/ratingBar2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:numStars="5"
-                android:stepSize="1"
-                android:rating="0"/>
-
-            <View
-                android:layout_marginTop="8dp"
-                android:layout_width="match_parent"
-                android:layout_height="1px"
-                android:background="@android:color/darker_gray"/>
-
-        </LinearLayout>
-
-
 
 
             <android.support.v7.widget.RecyclerView
@@ -149,9 +102,7 @@
                 xmlns:android="http://schemas.android.com/apk/res/android" />
 
 
-
-
-    </LinearLayout>
+</ScrollView>
     </android.support.design.widget.CoordinatorLayout>
 
 
