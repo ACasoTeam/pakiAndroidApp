@@ -1,8 +1,20 @@
 package acasoteam.pakistapp.asynktask;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.text.TextUtils;
 import android.util.Log;
+
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
@@ -12,6 +24,11 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
+
+import acasoteam.pakistapp.MapsActivity;
+import acasoteam.pakistapp.R;
+import acasoteam.pakistapp.entity.Paki;
 
 /**
  * Created by andre on 18/12/2016.
@@ -25,6 +42,14 @@ public class GetJson extends AsyncTask<String, Void, String> {
 
     BufferedReader reader = null;
 
+    Context context;
+    String out;
+
+    public GetJson(Context activity) {
+        this.context = activity;
+
+    }
+
 
     protected String doInBackground(String... urls) {
         try {
@@ -36,39 +61,16 @@ public class GetJson extends AsyncTask<String, Void, String> {
 
             urlConnection.setRequestProperty("Content-Type", "application/json");
             urlConnection.setRequestProperty("Accept", "application/json");
-            //urlConnection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
             urlConnection.setRequestProperty( "charset", "utf-8");
-            //urlConnection.setUseCaches( false );
-
-
-
-
-            /*if(RetrieveLoginTask.msCookieManager.getCookieStore().getCookies().size() > 0)
-            {
-                //While joining the Cookies, use ',' or ';' as needed. Most of the server are using ';'
-                urlConnection.setRequestProperty("Cookie",
-                        TextUtils.join(";", RetrieveLoginTask.msCookieManager.getCookieStore().getCookies()));
-            }*/
-            /*String urlParameters  = urls[0];
-            byte[] postData       = urlParameters.getBytes( Charset.forName("UTF-8") );
-
-            int    postDataLength = postData.length;
-            urlConnection.setRequestProperty("Content-Length", Integer.toString(postDataLength));
-
-            Log.v("GetJson","prima del connect");
-
-*/
 
             urlConnection.connect();
 
             Log.v("GetJson","dopo il connect");
 
-
             // Read the input stream into a String
             InputStream inputStream = urlConnection.getInputStream();
             StringBuffer buffer = new StringBuffer();
             if (inputStream == null) {
-                // Nothing to do.
                 Log.v("GetJson","return null");
                 return null;
             }
@@ -76,12 +78,7 @@ public class GetJson extends AsyncTask<String, Void, String> {
 
             String line;
             while ((line = reader.readLine()) != null) {
-                // Since it's JSON, adding a newline isn't necessary (it won't affect parsing)
-                // But it does make debugging a *lot* easier if you print out the completed
-                // buffer for debugging.
                 buffer.append(line + "\n");
-
-
             }
 
             if (buffer.length() == 0) {
@@ -92,36 +89,10 @@ public class GetJson extends AsyncTask<String, Void, String> {
             //forecastJsonStr = buffer.toString();
 
             Log.v("GetJson",buffer.toString());
+            out = buffer.toString();
+
             return  buffer.toString();
 
-
-
-
-
-/*
-            try( DataOutputStream wr = new DataOutputStream( urlConnection.getOutputStream())) {
-                Log.d("test debug", "postData:" + postData);
-                Log.d("test debug", "postDataLength:" + postDataLength);
-                Log.d("test debug", "urls[1]:" + urls[1]);
-                wr.write( postData );
-                wr.flush();
-                wr.close();
-            }
-*/
-
-            /*InputStream in = urlConnection.getInputStream();
-            InputStreamReader isw = new InputStreamReader(in);
-
-            int data = isw.read();
-            Log.d("test debug", "data:" + data);
-
-            String res="";
-            while (data != -1) {
-                char current = (char) data;
-                res+=current;
-                data = isw.read();
-            }
-            return res;*/
 
         } catch (Exception e) {
             this.exception = e;
@@ -135,5 +106,41 @@ public class GetJson extends AsyncTask<String, Void, String> {
     protected void onPostExecute(String feed) {
         // TODO: check this.exception
         // TODO: do something with the feed
+
+        Log.v("MapsActivity","out.trim:"+out.trim());
+        if (out != null && !out.trim().equals("0")) {
+            JSONObject res = null;
+            try {
+                res = new JSONObject(out);
+                JSONArray jPakis = res.getJSONArray("pakis");
+
+                SharedPreferences.Editor editor = context.getSharedPreferences("session", context.MODE_PRIVATE).edit();
+                editor.putInt("version", res.has("version")?res.getInt("version"):0);
+                editor.commit();
+                ((MapsActivity)context).myHelper.createDB(((MapsActivity)context).db, jPakis);
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            List<Paki> pakis = null;
+            try {
+                pakis = ((MapsActivity)context).myHelper.selectPakis(((MapsActivity)context).db);
+                Marker marker;
+                for (Paki paki : pakis) {
+                    marker = ((MapsActivity)context).mMap.addMarker(new MarkerOptions().position(new LatLng(paki.getLat(), paki.getLon())));
+                    marker.setTag(paki.getIdPaki());
+                    Log.v("MapsActivity", "lat:" + paki.getLat() + ", lon:" + paki.getLon());
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+
+
+        }
+
+
+
     }
 }

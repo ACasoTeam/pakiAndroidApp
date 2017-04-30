@@ -11,26 +11,17 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Build;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.widget.TextViewCompat;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.AttributeSet;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.support.annotation.NonNull;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.FloatingActionButton;
 import com.facebook.AccessToken;
@@ -39,12 +30,9 @@ import com.facebook.FacebookAuthorizationException;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.GraphRequest;
-import com.facebook.GraphRequestAsyncTask;
 import com.facebook.GraphResponse;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
-import com.facebook.login.widget.LoginButton;
-import com.facebook.share.Sharer;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
@@ -56,14 +44,10 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.places.AutocompleteFilter;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlaceAutocomplete;
-import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
-import com.google.android.gms.location.places.ui.PlaceSelectionListener;
-import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
@@ -71,23 +55,17 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.GoogleMap.OnMarkerClickListener;
 import android.widget.LinearLayout;
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
-
-//
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 import acasoteam.pakistapp.Adapter.CommentAdapter;
-import acasoteam.pakistapp.asynktask.GetAddress;
 import acasoteam.pakistapp.asynktask.GetJson;
 import acasoteam.pakistapp.database.DBHelper;
 import acasoteam.pakistapp.entity.Paki;
 
 
-import com.facebook.FacebookSdk;
 
 public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback,
         GoogleApiClient.ConnectionCallbacks,
@@ -95,24 +73,21 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         LocationListener,
         OnMarkerClickListener{
 
-    private GoogleMap mMap;
+    public GoogleMap mMap;
     GoogleApiClient mGoogleApiClient;
     Location mLastLocation;
     Marker mCurrLocationMarker;
     LocationRequest mLocationRequest;
-    DBHelper myHelper;
-    SQLiteDatabase db;
+    public DBHelper myHelper;
+    public SQLiteDatabase db;
 
     String loginId = null;
     String name = null;
-    String surname = null;
     String email = null;
 
     Activity activity;
 
     LatLng latLng;
-    FloatingActionButton fab1;
-    FloatingActionButton fab2;
     CallbackManager callbackManager;
     BottomSheetBehavior bottomSheetBehavior;
     Marker marker;
@@ -127,107 +102,13 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     CommentAdapter adapter;
 
     @Override
-    public boolean onMarkerClick(final Marker marker) {
-        // set hideable or not
-        try {
-            bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
-
-
-            idpaki = Integer.parseInt(marker.getTag().toString());
-            Paki paki = myHelper.selectPaki(db, idpaki);
-            Log.v ("MapsActivity", "idPaki:"+paki.getIdPaki());
-            Log.v ("MapsActivity", "avgrate:"+paki.getAvgRate());
-            Log.v ("MapsActivity", "NumVote:"+paki.getNumVote());
-            Log.v ("MapsActivity", "lat:"+paki.getLat());
-            Log.v ("MapsActivity", "lon:"+paki.getLon());
-
-            String address = paki.getAddress();
-
-            PakiDao pakidao = new PakiDao();
-
-            pakidao.getInfo(idpaki, address, this);
-        } catch (Exception e) {
-            Log.v ("MapsActivity", "exception: "+e.getMessage());
-        }
-        return true;
-    }
-
-    public void showBottomSheet(View v) {
-
-        if(bottomSheetBehavior.getState() == 4) {
-            bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
-            PakiDao pakidao = new PakiDao();
-
-            if (idpaki != 0) {
-                pakidao.getFeedback(idpaki, this);
-            }
-        }
-        else if(bottomSheetBehavior.getState() == 3)
-            bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
-
-
-
-    }
-
-
-
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data)
-    {
-
-        if (requestCode == PLACE_AUTOCOMPLETE_REQUEST_CODE) {
-            if (resultCode == RESULT_OK) {
-                Place place = PlaceAutocomplete.getPlace(this, data);
-                Log.v("MapsActivity", "Place: " + place.getName());
-                LatLng PlatLng = place.getLatLng();
-                mMap.animateCamera(CameraUpdateFactory.newLatLng(PlatLng));
-            } else if (resultCode == PlaceAutocomplete.RESULT_ERROR) {
-                Status status = PlaceAutocomplete.getStatus(this, data);
-                // TODO: Handle the error.
-                Log.i("LOG", status.getStatusMessage());
-
-            } else if (resultCode == RESULT_CANCELED) {
-                // The user canceled the operation.
-            }
-        }
-
-
-        //super.onActivityResult(requestCode, resultCode, data);
-       /* if (resultCode == RESULT_OK)
-        {
-            Log.v("MapsActivity","onSuccess");
-            Log.v("MapsActivity","data: "+ data.toString());
-            Log.v("MapsActivity","data extras: "+data.getExtras().toString());
-
-
-        }
-        else
-        {
-            Log.v("MapsActivity","else");
-
-        }*/
-       // callbackManager.onActivityResult(requestCode, resultCode, data);
-
-    }
-
-    @Override
     protected void onCreate(Bundle savedInstanceState) {
         setTheme(R.style.AppTheme);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
         activity = this;
         callbackManager = CallbackManager.Factory.create();
-        //LoginButton loginButton = (LoginButton) findViewById(R.id.login_button);
-        //loginButton.setReadPermissions("public_profile");
-        //Log.v("MapsActivity","getLoginBehavior:"+loginButton.getLoginBehavior().toString());
-        // FacebookSdk.sdkInitialize(getApplicationContext());
 
-	   /*fab2 = (FloatingActionButton)findViewById(R.id.fab2);
-        if (Build.VERSION.SDK_INT == Build.VERSION_CODES.KITKAT) {
-            ViewGroup.MarginLayoutParams p = (ViewGroup.MarginLayoutParams) fab2.getLayoutParams();
-            p.setMargins(0, 12, 21, -10);
-        }*/
 
         // get the bottom sheet view
         LinearLayout llBottomSheet = (LinearLayout) findViewById(R.id.bottom_sheet);
@@ -235,30 +116,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         // init the bottom sheet behavior
         bottomSheetBehavior = BottomSheetBehavior.from(llBottomSheet);
         bottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
-
-        /*// change the state of the bottom sheet
-        bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
-        bottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
-        bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
-
-        // set the peek height
-        bottomSheetBehavior.setPeekHeight(340);
-
-        // set hideable or not
-        bottomSheetBehavior.setHideable(false);
-
-        // set callback for changes
-        bottomSheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
-            @Override
-            public void onStateChanged(@NonNull View bottomSheet, int newState) {
-
-            }
-
-            @Override
-            public void onSlide(@NonNull View bottomSheet, float slideOffset) {
-
-            }
-        });*/
 
         rb=(RatingBar)findViewById(R.id.ratingBar);
         address = (TextView)findViewById(R.id.address);
@@ -354,26 +211,12 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         int version = pref.getInt("version",0);
 
         String u = "https://acaso-pakistapp.rhcloud.com/PakiOperation?action=pakilist&version="+version;
-/*
-        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-        imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);*/
         String out = "";
         myHelper = DBHelper.getInstance(getApplicationContext());
         db = myHelper.getWritableDatabase();
         try {
-            out = new GetJson().execute(u).get();
-            Log.v("MapsActivity","out.trim:"+out.trim());
-            if (!out.trim().equals("0")) {
-                JSONObject res = new JSONObject(out);
+            new GetJson(this).execute(u);
 
-                JSONArray jPakis = res.getJSONArray("pakis");
-
-                SharedPreferences.Editor editor = getSharedPreferences("session", MODE_PRIVATE).edit();
-                editor.putInt("version", res.has("version")?res.getInt("version"):0);
-                editor.commit();
-
-                myHelper.createDB(db, jPakis);
-            }
 
 
 
@@ -382,6 +225,21 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         } catch (Exception e) {
             e.printStackTrace();
         }
+        Log.v("MapsActivity","blablablablablablablablablablablablablablablablablablablablablablablablablablabla");
+        Log.v("MapsActivity","blablablablablablablablablablablablablablablablablablablablablablablablablablabla");
+        Log.v("MapsActivity","blablablablablablablablablablablablablablablablablablablablablablablablablablabla");
+        Log.v("MapsActivity","blablablablablablablablablablablablablablablablablablablablablablablablablablabla");
+        Log.v("MapsActivity","blablablablablablablablablablablablablablablablablablablablablablablablablablabla");
+        Log.v("MapsActivity","blablablablablablablablablablablablablablablablablablablablablablablablablablabla");
+        Log.v("MapsActivity","blablablablablablablablablablablablablablablablablablablablablablablablablablabla");
+        Log.v("MapsActivity","blablablablablablablablablablablablablablablablablablablablablablablablablablabla");
+        Log.v("MapsActivity","blablablablablablablablablablablablablablablablablablablablablablablablablablabla");
+        Log.v("MapsActivity","blablablablablablablablablablablablablablablablablablablablablablablablablablabla");
+        Log.v("MapsActivity","blablablablablablablablablablablablablablablablablablablablablablablablablablabla");
+        Log.v("MapsActivity","blablablablablablablablablablablablablablablablablablablablablablablablablablabla");
+        Log.v("MapsActivity","blablablablablablablablablablablablablablablablablablablablablablablablablablabla");
+        Log.v("MapsActivity","blablablablablablablablablablablablablablablablablablablablablablablablablablabla");
+
         Log.v("MapsActivity",""+out);
 
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -392,52 +250,78 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
-        /*try {
-            int a = new GetAddress().execute().get();
-
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        }*/
-
-/*
-
-        PlaceAutocompleteFragment autocompleteFragment = (PlaceAutocompleteFragment)
-                getFragmentManager().findFragmentById(R.id.place_autocomplete_fragment);
-
-
-        AutocompleteFilter typeFilter = new AutocompleteFilter.Builder()
-                .setTypeFilter(AutocompleteFilter.TYPE_FILTER_ADDRESS)
-                .build();
-
-        autocompleteFragment.setFilter(typeFilter);
-
-
-        autocompleteFragment.setBoundsBias(new LatLngBounds(
-                new LatLng(44.98034238084972, 7.49267578125),
-                new LatLng(45.1278045274732, 7.804412841796875)));*/
-
-
-/*
-        autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
-            @Override
-            public void onPlaceSelected(Place place) {
-                // TODO: Get info about the selected place.
-                Log.v("MapsActivity", "Place: " + place.getName());
-                LatLng PlatLng = place.getLatLng();
-                mMap.animateCamera(CameraUpdateFactory.newLatLng(PlatLng));
-            }
-
-            @Override
-            public void onError(Status status) {
-                // TODO: Handle the error.
-                Log.v("MapsActivity", "An error occurred: " + status);
-            }
-        });*/
 
     }
 
+
+    @Override
+    public boolean onMarkerClick(final Marker marker) {
+        // set hideable or not
+        try {
+            bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+
+
+            idpaki = Integer.parseInt(marker.getTag().toString());
+            Paki paki = myHelper.selectPaki(db, idpaki);
+            Log.v ("MapsActivity", "idPaki:"+paki.getIdPaki());
+            Log.v ("MapsActivity", "avgrate:"+paki.getAvgRate());
+            Log.v ("MapsActivity", "NumVote:"+paki.getNumVote());
+            Log.v ("MapsActivity", "lat:"+paki.getLat());
+            Log.v ("MapsActivity", "lon:"+paki.getLon());
+
+            String address = paki.getAddress();
+
+            PakiDao pakidao = new PakiDao();
+
+            pakidao.getInfo(idpaki, address, this);
+        } catch (Exception e) {
+            Log.v ("MapsActivity", "exception: "+e.getMessage());
+        }
+        return true;
+    }
+
+    public void showBottomSheet(View v) {
+
+        if(bottomSheetBehavior.getState() == 4) {
+            bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+            PakiDao pakidao = new PakiDao();
+
+            if (idpaki != 0) {
+                pakidao.getFeedback(idpaki, this);
+            }
+        }
+        else if(bottomSheetBehavior.getState() == 3)
+            bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+
+
+
+    }
+
+
+
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data)
+    {
+
+        if (requestCode == PLACE_AUTOCOMPLETE_REQUEST_CODE) {
+            if (resultCode == RESULT_OK) {
+                Place place = PlaceAutocomplete.getPlace(this, data);
+                Log.v("MapsActivity", "Place: " + place.getName());
+                LatLng PlatLng = place.getLatLng();
+                mMap.animateCamera(CameraUpdateFactory.newLatLng(PlatLng));
+            } else if (resultCode == PlaceAutocomplete.RESULT_ERROR) {
+                Status status = PlaceAutocomplete.getStatus(this, data);
+                // TODO: Handle the error.
+                Log.i("LOG", status.getStatusMessage());
+
+            } else if (resultCode == RESULT_CANCELED) {
+                // The user canceled the operation.
+            }
+        }
+
+
+    }
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
@@ -465,12 +349,16 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         List<Paki> pakis = null;
         try {
+
+            /*while (!asyncDone) {
+                //lammerda......
+            }*/
             pakis = myHelper.selectPakis(db);
 
-            for (Paki paki : pakis){
+            for (Paki paki : pakis) {
                 marker = mMap.addMarker(new MarkerOptions().position(new LatLng(paki.getLat(), paki.getLon())));
                 marker.setTag(paki.getIdPaki());
-                Log.v("MapsActivity","lat:"+paki.getLat()+", lon:"+paki.getLon());
+                Log.v("MapsActivity", "lat:" + paki.getLat() + ", lon:" + paki.getLon());
             }
 
 
@@ -531,13 +419,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         //Place current location marker
 
         LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
-        /*
-        MarkerOptions markerOptions = new MarkerOptions();
-        markerOptions.position(latLng);
-        markerOptions.title("Current Position");
-        markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA));
-        mCurrLocationMarker = mMap.addMarker(markerOptions);
-        */
 
         //move map camera
         mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
@@ -583,10 +464,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             // Asking user if explanation is needed
             if (ActivityCompat.shouldShowRequestPermissionRationale(this,
                     Manifest.permission.ACCESS_FINE_LOCATION)) {
-
-                // Show an explanation to the user *asynchronously* -- don't block
-                // this thread waiting for the user's response! After the user
-                // sees the explanation, try again to request the permission.
 
                 //Prompt the user once explanation has been shown
                 ActivityCompat.requestPermissions(this,
