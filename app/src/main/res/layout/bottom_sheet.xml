@@ -40,6 +40,7 @@
             android:textColor="@android:color/white" />
 
         <ProgressBar
+            android:layout_below="@+id/address"
             android:id="@+id/spinBar"
             style="?android:attr/progressBarStyleLarge"
             android:layout_width="wrap_content"
