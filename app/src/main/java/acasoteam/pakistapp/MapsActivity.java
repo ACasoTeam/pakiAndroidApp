@@ -55,6 +55,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.GoogleMap.OnMarkerClickListener;
 import android.widget.LinearLayout;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.Arrays;
@@ -261,6 +262,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
 
 
+
             idpaki = Integer.parseInt(marker.getTag().toString());
             Paki paki = myHelper.selectPaki(db, idpaki);
             Log.v ("MapsActivity", "idPaki:"+paki.getIdPaki());
@@ -292,6 +294,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
         else if(bottomSheetBehavior.getState() == 3)
             bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+
 
 
 
@@ -612,11 +615,14 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
     }
 
-    public void navigator(View view){
+    public void navigator(View view) throws JSONException {
         //tutto temporaneo
-        double mLat = 45.07;
-        double mLong =7.68;
-        startNavigation(mLat,mLong);
+        if (idpaki != 0) {
+            Paki paki = myHelper.selectPaki(db, idpaki);
+            double mLat = paki.getLat();
+            double mLong = paki.getLon();
+            startNavigation(mLat, mLong);
+        }
     }
 
 
