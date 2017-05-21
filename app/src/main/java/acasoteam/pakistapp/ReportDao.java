@@ -13,9 +13,9 @@ import acasoteam.pakistapp.database.DBHelper;
  */
 public class ReportDao {
 
-    public boolean sendReport (long loginId, LatLng latLng, Context context){
+    public boolean sendReport (String loginId, LatLng latLng, String name, String email, Context context){
 
-        String u = "https://acaso-pakistapp.rhcloud.com/UserOperation?action=sendReport&lat="+latLng.latitude+"&lon="+latLng.longitude+"&loginId="+loginId;
+        String u = "https://acaso-pakistapp.rhcloud.com/UserOperation?action=sendReport&lat="+latLng.latitude+"&lon="+latLng.longitude+"&loginId="+loginId+"&name="+name+"&email="+email;
         try {
             new SendReport(context).execute(u);
 

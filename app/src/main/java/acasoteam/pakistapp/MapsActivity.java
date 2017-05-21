@@ -101,6 +101,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     RecyclerView rv;
     CommentAdapter adapter;
+    AccessToken accessToken;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -110,6 +111,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         activity = this;
         callbackManager = CallbackManager.Factory.create();
 
+        accessToken = AccessToken.getCurrentAccessToken();
 
         // get the bottom sheet view
         LinearLayout llBottomSheet = (LinearLayout) findViewById(R.id.bottom_sheet);
@@ -141,43 +143,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             @Override
             public void onSuccess(LoginResult loginResult) {
                 Log.v("MapsActivity","onSuccess");
-                final AccessToken accessToken = loginResult.getAccessToken();
-
-                GraphRequest.newMeRequest(accessToken, new GraphRequest.GraphJSONObjectCallback() {
-                    @Override
-                    public void onCompleted(JSONObject user, GraphResponse graphResponse) {
-                        loginId = user.optString("id");
-                        name = user.optString("name");
-                        email = user.optString("email");
-                        Log.d("MapsActivity", "name:"+name);
-                        Log.d("MapsActivity", "email:"+email);
-
-                        Log.d("MapsActivity", user.optString("id"));
-                        Log.d("MapsActivity", user.optString("email"));
-                        if (loginId != null) {
-                            Log.v("MapsActivity","loginId != null, ed è:"+loginId);
-
-                            ReportDao reportdao = new ReportDao();
-
-                            //todo: cambiare ste assegnazioni random
-                            LocationManager lm = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
-
-                            if (ContextCompat.checkSelfPermission(getApplicationContext(),
-                                    Manifest.permission.ACCESS_FINE_LOCATION)
-                                    == PackageManager.PERMISSION_GRANTED) {
-                                Location location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-
-                                latLng = new LatLng(location.getLatitude(), location.getLongitude());
-
-                                reportdao.sendReport(1,latLng, getApplicationContext());
-
-                            }
-                        } else {
-                            Log.v("MapsActivity","loginId == 0");
-
-                        }
-                    }
-                }).executeAsync();
+                accessToken = loginResult.getAccessToken();
 
             }
 
@@ -262,7 +228,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
 
 
-
             idpaki = Integer.parseInt(marker.getTag().toString());
             Paki paki = myHelper.selectPaki(db, idpaki);
             Log.v ("MapsActivity", "idPaki:"+paki.getIdPaki());
@@ -294,7 +259,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
         else if(bottomSheetBehavior.getState() == 3)
             bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
-
 
 
 
@@ -551,7 +515,45 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     public void report(View view) {
 
+        Log.v("MapsActivity", "report");
+
         LoginManager.getInstance().logInWithReadPermissions(this, Arrays.asList("public_profile", "email"));
+
+
+        if (accessToken != null) {
+            GraphRequest.newMeRequest(accessToken, new GraphRequest.GraphJSONObjectCallback() {
+                @Override
+                public void onCompleted(JSONObject user, GraphResponse graphResponse) {
+                    loginId = user.optString("id");
+                    name = user.optString("name");
+                    email = user.optString("email");
+
+                    if (loginId != null) {
+                        Log.v("MapsActivity","loginId != null, ed è:"+loginId);
+
+                        ReportDao reportdao = new ReportDao();
+
+                        //todo: cambiare ste assegnazioni random
+                        LocationManager lm = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
+
+                        if (ContextCompat.checkSelfPermission(getApplicationContext(),
+                                Manifest.permission.ACCESS_FINE_LOCATION)
+                                == PackageManager.PERMISSION_GRANTED) {
+                            Location location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+
+                            latLng = new LatLng(location.getLatitude(), location.getLongitude());
+
+                            reportdao.sendReport(loginId,latLng,name,email,getApplicationContext());
+
+                        }
+                    } else {
+                        Log.v("MapsActivity","loginId == 0");
+
+                    }
+                }
+            }).executeAsync();
+        }
+
 
     }
 
