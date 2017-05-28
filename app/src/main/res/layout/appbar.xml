@@ -12,7 +12,7 @@
             android:layout_height="wrap_content"
             android:background="@drawable/cast_album_art_placeholder"
             android:layout_centerVertical="true"
-            android:onClick="search"/>
+            android:onClick="prova1"/>
 
 
         <ImageButton
