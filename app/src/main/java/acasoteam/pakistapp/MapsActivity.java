@@ -638,6 +638,23 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     }
 
+    public void addFeedback(int oid, String name, float rate){
+
+        Intent i=new Intent(this,FeedActivity.class);
+        i.putExtra("oid",oid);
+        i.putExtra("name",name);
+        i.putExtra("rate",rate);
+        startActivity(i);
+
+    }
+
+    public void prova1(View view){
+        int oid =43;
+        String name = "prova";
+        float rate = 4;
+        addFeedback(oid,name,rate);
+    }
+
     public TextView getAddress() {
         return address;
     }
@@ -677,5 +694,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     public void setAdapter(CommentAdapter adapter) {
         this.adapter = adapter;
     }
+
 
 }
