@@ -23,12 +23,12 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.support.design.widget.BottomSheetBehavior;
-import android.support.design.widget.FloatingActionButton;
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookAuthorizationException;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
+import com.facebook.FacebookSdk;
 import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
 import com.facebook.login.LoginManager;
@@ -54,13 +54,10 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.GoogleMap.OnMarkerClickListener;
 import android.widget.LinearLayout;
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.util.Arrays;
 import java.util.List;
-
 import acasoteam.pakistapp.Adapter.CommentAdapter;
 import acasoteam.pakistapp.asynktask.GetJson;
 import acasoteam.pakistapp.database.DBHelper;
@@ -81,24 +78,18 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     LocationRequest mLocationRequest;
     public DBHelper myHelper;
     public SQLiteDatabase db;
-
     String loginId = null;
     String name = null;
     String email = null;
-
     Activity activity;
-
     LatLng latLng;
     CallbackManager callbackManager;
     BottomSheetBehavior bottomSheetBehavior;
     Marker marker;
     ProgressBar spinBar;
-
     TextView address;
     RatingBar rb;
-
     int idpaki;
-
     RecyclerView rv;
     CommentAdapter adapter;
     AccessToken accessToken;
@@ -106,6 +97,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         setTheme(R.style.AppTheme);
+        FacebookSdk.sdkInitialize(getApplicationContext());
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
         activity = this;
@@ -138,38 +130,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         });
 
-        // Callback registration
-        LoginManager.getInstance().registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
-            @Override
-            public void onSuccess(LoginResult loginResult) {
-                Log.v("MapsActivity","onSuccess");
-                accessToken = loginResult.getAccessToken();
 
-            }
-
-            @Override
-            public void onCancel() {
-                Log.v("MapsActivity","onCancel");
-                loginId = null;
-
-            }
-
-            @Override
-            public void onError(FacebookException exception) {
-                Log.v("MapsActivity","onError");
-                Log.e("MapsActivity","ERROR: "+exception.getMessage());
-                loginId = null;
-                if (exception instanceof FacebookAuthorizationException) {
-                    if (AccessToken.getCurrentAccessToken() != null) {
-                        LoginManager.getInstance().logOut();
-                        LoginManager.getInstance().logInWithReadPermissions(activity, Arrays.asList("public_profile", "email"));
-                    }
-                }
-
-
-
-            }
-        });
         //LoginManager.getInstance().logOut();
 
         //FINE PROVA
@@ -185,27 +146,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             new GetJson(this).execute(u);
 
 
-
-
-
-
         } catch (Exception e) {
             e.printStackTrace();
         }
-        Log.v("MapsActivity","blablablablablablablablablablablablablablablablablablablablablablablablablablabla");
-        Log.v("MapsActivity","blablablablablablablablablablablablablablablablablablablablablablablablablablabla");
-        Log.v("MapsActivity","blablablablablablablablablablablablablablablablablablablablablablablablablablabla");
-        Log.v("MapsActivity","blablablablablablablablablablablablablablablablablablablablablablablablablablabla");
-        Log.v("MapsActivity","blablablablablablablablablablablablablablablablablablablablablablablablablablabla");
-        Log.v("MapsActivity","blablablablablablablablablablablablablablablablablablablablablablablablablablabla");
-        Log.v("MapsActivity","blablablablablablablablablablablablablablablablablablablablablablablablablablabla");
-        Log.v("MapsActivity","blablablablablablablablablablablablablablablablablablablablablablablablablablabla");
-        Log.v("MapsActivity","blablablablablablablablablablablablablablablablablablablablablablablablablablabla");
-        Log.v("MapsActivity","blablablablablablablablablablablablablablablablablablablablablablablablablablabla");
-        Log.v("MapsActivity","blablablablablablablablablablablablablablablablablablablablablablablablablablabla");
-        Log.v("MapsActivity","blablablablablablablablablablablablablablablablablablablablablablablablablablabla");
-        Log.v("MapsActivity","blablablablablablablablablablablablablablablablablablablablablablablablablablabla");
-        Log.v("MapsActivity","blablablablablablablablablablablablablablablablablablablablablablablablablablabla");
 
         Log.v("MapsActivity",""+out);
 
@@ -285,6 +228,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             } else if (resultCode == RESULT_CANCELED) {
                 // The user canceled the operation.
             }
+        } else {
+            callbackManager.onActivityResult(requestCode, resultCode, data);
         }
 
 
@@ -341,8 +286,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         }
     }
-
-
 
     protected synchronized void buildGoogleApiClient() {
         mGoogleApiClient = new GoogleApiClient.Builder(this)
@@ -515,43 +458,87 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     public void report(View view) {
 
-        Log.v("MapsActivity", "report");
+        if (bottomSheetBehavior.getState() == 5) {
+            Log.v("MapsActivity", "accesstoken:" + accessToken);
+            LoginManager.getInstance().logInWithReadPermissions(this, Arrays.asList("public_profile", "email"));
 
-        LoginManager.getInstance().logInWithReadPermissions(this, Arrays.asList("public_profile", "email"));
-
-
-        if (accessToken != null) {
-            GraphRequest.newMeRequest(accessToken, new GraphRequest.GraphJSONObjectCallback() {
+            // Callback registration
+            LoginManager.getInstance().registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
                 @Override
-                public void onCompleted(JSONObject user, GraphResponse graphResponse) {
-                    loginId = user.optString("id");
-                    name = user.optString("name");
-                    email = user.optString("email");
+                public void onSuccess(LoginResult loginResult) {
+                    Log.v("MapsActivity", "onSuccess");
+                    accessToken = loginResult.getAccessToken();
 
-                    if (loginId != null) {
-                        Log.v("MapsActivity","loginId != null, ed è:"+loginId);
+                }
 
-                        ReportDao reportdao = new ReportDao();
+                @Override
+                public void onCancel() {
+                    Log.v("MapsActivity", "onCancel");
+                    loginId = null;
 
-                        //todo: cambiare ste assegnazioni random
-                        LocationManager lm = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
+                }
 
-                        if (ContextCompat.checkSelfPermission(getApplicationContext(),
-                                Manifest.permission.ACCESS_FINE_LOCATION)
-                                == PackageManager.PERMISSION_GRANTED) {
-                            Location location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+                @Override
+                public void onError(FacebookException exception) {
+                    Log.v("MapsActivity", "onError");
+                    Log.e("MapsActivity", "ERROR: " + exception.getMessage());
+                    loginId = null;
+                    if (exception instanceof FacebookAuthorizationException) {
+                        if (AccessToken.getCurrentAccessToken() != null) {
+                            LoginManager.getInstance().logOut();
+                            LoginManager.getInstance().logInWithReadPermissions(activity, Arrays.asList("public_profile", "email"));
+                        }
+                    }
 
-                            latLng = new LatLng(location.getLatitude(), location.getLongitude());
 
-                            reportdao.sendReport(loginId,latLng,name,email,getApplicationContext());
+                }
+            });
+
+            if (accessToken != null) {
+                GraphRequest.newMeRequest(accessToken, new GraphRequest.GraphJSONObjectCallback() {
+                    @Override
+                    public void onCompleted(JSONObject user, GraphResponse graphResponse) {
+                        loginId = user.optString("id");
+                        name = user.optString("name");
+                        email = user.optString("email");
+
+                        if (loginId != null) {
+                            Log.v("MapsActivity", "loginId != null, ed è:" + loginId);
+
+                            ReportDao reportdao = new ReportDao();
+
+                            //todo: cambiare ste assegnazioni random
+                            LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+
+                            if (ContextCompat.checkSelfPermission(getApplicationContext(),
+                                    Manifest.permission.ACCESS_FINE_LOCATION)
+                                    == PackageManager.PERMISSION_GRANTED) {
+                                Location location = getLastKnownLocation();
+
+                                if (location != null) {
+                                    latLng = new LatLng(location.getLatitude(), location.getLongitude());
+                                    Log.v("MapsActivity", "name:" + name);
+                                    Log.v("MapsActivity", "email:" + email);
+                                    reportdao.sendReport(loginId, latLng, name, email, getApplicationContext());
+                                } else {
+                                    //todo: mettere il toast
+                                    //Toast.makeText(context, "permission denied", Toast.LENGTH_LONG).show();
+                                }
+
+                            }
+                        } else {
+                            Log.v("MapsActivity", "loginId == 0");
 
                         }
-                    } else {
-                        Log.v("MapsActivity","loginId == 0");
-
                     }
-                }
-            }).executeAsync();
+                }).executeAsync();
+            }
+        } else if (bottomSheetBehavior.getState() == 3 || bottomSheetBehavior.getState() == 4) {
+            try {
+                navigator(view);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
         }
 
 
@@ -605,7 +592,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
 
             Intent intent =
-                    new PlaceAutocomplete.IntentBuilder(PlaceAutocomplete.MODE_FULLSCREEN)
+                    new PlaceAutocomplete.IntentBuilder(PlaceAutocomplete.MODE_OVERLAY)
                             .setFilter(typeFilter)
                             .setBoundsBias(bound)
                             .build(this);
@@ -638,7 +625,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     }
 
-    public void addFeedback(int oid, String name, float rate){
+    public void addFeedback(int oid, String name, int rate){
 
         Intent i=new Intent(this,FeedActivity.class);
         i.putExtra("oid",oid);
@@ -651,7 +638,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     public void prova1(View view){
         int oid =43;
         String name = "prova";
-        float rate = 4;
+        int rate = 4;
         addFeedback(oid,name,rate);
     }
 
