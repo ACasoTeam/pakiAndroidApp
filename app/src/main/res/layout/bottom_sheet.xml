@@ -72,8 +72,11 @@
             android:layout_height="wrap_content"
             android:numStars="5"
             android:stepSize="0.5"
-            android:rating="0"/>
-        <!--         style="@style/beerRatingBar" -->
+            android:rating="0"
+                        />
+        <!--         style="@style/beerRatingBar"
+
+        android:theme="@style/RatingBar2"-->
 
     </RelativeLayout>
 
