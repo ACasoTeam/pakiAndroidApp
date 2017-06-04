@@ -97,13 +97,13 @@ public class SendFeedback extends AsyncTask<String, Void, Void> {
         // TODO: do something with the feed
 
         CharSequence text = "";
-
+        Log.v("RES:",res+"");
         if (res == 0){
-            text = "Report già inviato";
+            text = "Commento modificato";
         } else if (res == 1){
-            text = "Report inviato correttamente";
+            text = "Nuovo commento aggiunto!";
         } else {
-            text = "Errore nell'invio del Report";
+            text = "Errore nell'invio del Commento";
         }
 
         int duration = Toast.LENGTH_SHORT;

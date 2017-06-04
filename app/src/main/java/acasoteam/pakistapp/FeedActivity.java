@@ -22,7 +22,7 @@ public class FeedActivity extends AppCompatActivity {
         Intent i=getIntent();
         int paki= i.getIntExtra("oid",-1);
         String name=i.getStringExtra("name");
-        float rate=i.getFloatExtra("rate",0);
+        int rate=i.getIntExtra("rate",0);
 
         Log.v("LOG INTENT: oid", String.valueOf(oid));
         Log.v("LOG INTENT: name", name);
@@ -55,20 +55,22 @@ public class FeedActivity extends AppCompatActivity {
 
         TextView text = (TextView) findViewById(R.id.fname);
         String feedback = text.getText().toString();
-        float rate = rating.getRating();
+        int rate = (int) rating.getRating();
 
         Log.v("SEND FEEDBACK: oid",""+oid);
         Log.v("SEND FEEDBACK: feed",feedback);
         Log.v("SEND FEEDBACK: rate",rate+"");
 
         FeedbackDao fd = new FeedbackDao();
-        int idUser =19;
+        int idUser = 1;
 
         if(fd.sendFeedback(oid,feedback,rate,idUser,this)){
             Log.v("SEND FEEDBACK:","SUCCESS");
         }else{
             Log.v("SEND FEEDBACK:","FAIL");
         }
+
+        finish();
 
 
     }
