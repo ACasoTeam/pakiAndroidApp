@@ -46,6 +46,21 @@ public class GetFeedback extends AsyncTask<String, Void, Void> {
 
     }
 
+
+    @Override
+    protected void onPreExecute() {
+        List<SingleComment> comments = new ArrayList<>();
+        comments.add(new SingleComment("",0,""));
+        CommentAdapter adapter = new CommentAdapter(comments, context);
+        LinearLayoutManager llm = new LinearLayoutManager(context);
+        ((MapsActivity) context).getRv().setLayoutManager(llm);
+        ((MapsActivity) context).getRv().setHasFixedSize(true);
+        ((MapsActivity) context).getRv().setAdapter(adapter);
+        //((MapsActivity)context).getAdapter().notifyDataSetChanged();
+        Log.v("GetFeedback", "onPreExecute, dopo il setAdapter");
+    }
+
+
     protected Void doInBackground(String... urls) {
         try {
             HttpURLConnection urlConnection = null;
