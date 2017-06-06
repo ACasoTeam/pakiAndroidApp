@@ -23,12 +23,6 @@
         <item name="colorControlActivated">@color/colorAccent</item>
     </style>
 
-     <style name="beerRatingBar" parent="@android:style/Widget.RatingBar">
-            <item name="android:progressDrawable">@drawable/beer_ratingbar_full</item>
-            <item name="android:minHeight">23dip</item>
-            <item name="android:maxHeight">25dip</item>
-     </style>
-
     <style name="splashScreenTheme" parent="@android:style/Theme.DeviceDefault.Light.NoActionBar">
         <item name="android:windowBackground">@drawable/paki_img</item>
     </style>
