@@ -18,7 +18,7 @@ public class FeedbackDao {
 
         String u = "https://acaso-pakistapp.rhcloud.com/PakiOperation?action=pakiFeedback&idpaki="+idpaki;
         try {
-            new GetFeedback(context).execute(u);
+            new GetFeedback(context,idpaki).execute(u);
 
         } catch (Exception e) {
             e.printStackTrace();
