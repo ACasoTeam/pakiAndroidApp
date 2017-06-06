@@ -48,6 +48,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
@@ -184,6 +185,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             PakiDao pakidao = new PakiDao();
 
             pakidao.getInfo(idpaki, address, this);
+
+            LatLng PlatLng = new LatLng(paki.getLat(), paki.getLon());
+            mMap.animateCamera(CameraUpdateFactory.newLatLng(PlatLng));
+
         } catch (Exception e) {
             Log.v ("MapsActivity", "exception: "+e.getMessage());
         }
@@ -268,7 +273,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             pakis = myHelper.selectPakis(db);
 
             for (Paki paki : pakis) {
-                marker = mMap.addMarker(new MarkerOptions().position(new LatLng(paki.getLat(), paki.getLon())));
+                marker = mMap.addMarker(new MarkerOptions()
+                        .position(new LatLng(paki.getLat(), paki.getLon()))
+                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_beer1a)));
                 marker.setTag(paki.getIdPaki());
                 Log.v("MapsActivity", "lat:" + paki.getLat() + ", lon:" + paki.getLon());
             }
