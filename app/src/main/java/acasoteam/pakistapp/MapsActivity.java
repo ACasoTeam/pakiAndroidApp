@@ -483,6 +483,46 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                     Log.v("MapsActivity", "onSuccess");
                     accessToken = loginResult.getAccessToken();
 
+                    if (accessToken != null) {
+                        GraphRequest.newMeRequest(accessToken, new GraphRequest.GraphJSONObjectCallback() {
+                            @Override
+                            public void onCompleted(JSONObject user, GraphResponse graphResponse) {
+                                loginId = user.optString("id");
+                                name = user.optString("name");
+                                email = user.optString("email");
+
+                                if (loginId != null) {
+                                    Log.v("MapsActivity", "loginId != null, ed è:" + loginId);
+
+                                    ReportDao reportdao = new ReportDao();
+
+                                    //todo: cambiare ste assegnazioni random
+                                    LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+
+                                    if (ContextCompat.checkSelfPermission(getApplicationContext(),
+                                            Manifest.permission.ACCESS_FINE_LOCATION)
+                                            == PackageManager.PERMISSION_GRANTED) {
+                                        Location location = getLastKnownLocation();
+
+                                        if (location != null) {
+                                            latLng = new LatLng(location.getLatitude(), location.getLongitude());
+                                            Log.v("MapsActivity", "name:" + name);
+                                            Log.v("MapsActivity", "email:" + email);
+                                            reportdao.sendReport(loginId, latLng, name, email, getApplicationContext());
+                                        } else {
+                                            //todo: mettere il toast
+                                            //Toast.makeText(context, "permission denied", Toast.LENGTH_LONG).show();
+                                        }
+
+                                    }
+                                } else {
+                                    Log.v("MapsActivity", "loginId == 0");
+
+                                }
+                            }
+                        }).executeAsync();
+                    }
+
                 }
 
                 @Override
@@ -508,45 +548,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 }
             });
 
-            if (accessToken != null) {
-                GraphRequest.newMeRequest(accessToken, new GraphRequest.GraphJSONObjectCallback() {
-                    @Override
-                    public void onCompleted(JSONObject user, GraphResponse graphResponse) {
-                        loginId = user.optString("id");
-                        name = user.optString("name");
-                        email = user.optString("email");
-
-                        if (loginId != null) {
-                            Log.v("MapsActivity", "loginId != null, ed è:" + loginId);
-
-                            ReportDao reportdao = new ReportDao();
-
-                            //todo: cambiare ste assegnazioni random
-                            LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-
-                            if (ContextCompat.checkSelfPermission(getApplicationContext(),
-                                    Manifest.permission.ACCESS_FINE_LOCATION)
-                                    == PackageManager.PERMISSION_GRANTED) {
-                                Location location = getLastKnownLocation();
-
-                                if (location != null) {
-                                    latLng = new LatLng(location.getLatitude(), location.getLongitude());
-                                    Log.v("MapsActivity", "name:" + name);
-                                    Log.v("MapsActivity", "email:" + email);
-                                    reportdao.sendReport(loginId, latLng, name, email, getApplicationContext());
-                                } else {
-                                    //todo: mettere il toast
-                                    //Toast.makeText(context, "permission denied", Toast.LENGTH_LONG).show();
-                                }
-
-                            }
-                        } else {
-                            Log.v("MapsActivity", "loginId == 0");
-
-                        }
-                    }
-                }).executeAsync();
-            }
         } else if (bottomSheetBehavior.getState() == 3 || bottomSheetBehavior.getState() == 4) {
             try {
                 navigator(view);
