@@ -81,8 +81,12 @@ public class PakiDao {
     public boolean getFeedback (int idPaki, Context context){
 
         String u = "https://acaso-pakistapp.rhcloud.com/PakiOperation?action=pakiFeedback&idpaki="+idPaki;
+        String pakiString = ""+idPaki;
+        String[] urls = new String[2];
+        urls[0] = u;
+        urls[1] = pakiString;
         try {
-            new GetFeedback(context).execute(u);
+            new GetFeedback(context).execute(urls);
 
         } catch (Exception e) {
             e.printStackTrace();
