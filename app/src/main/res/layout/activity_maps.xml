@@ -47,11 +47,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginRight="16dp"
-        android:layout_marginBottom="84dp"
+        android:layout_marginBottom="120dp"
         android:src="@drawable/ic_cast_light"
         android:id="@+id/fab2"
         android:onClick="goToNearest"
-        app:layout_anchor="@+id/bottom_sheet"
+        app:layout_anchor="@+id/fab"
         app:layout_anchorGravity="top|end"/>
 
 

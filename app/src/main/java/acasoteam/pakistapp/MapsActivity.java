@@ -11,6 +11,7 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Build;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
@@ -94,6 +95,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     RecyclerView rv;
     CommentAdapter adapter;
     AccessToken accessToken;
+    FloatingActionButton fab;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -113,6 +115,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         bottomSheetBehavior = BottomSheetBehavior.from(llBottomSheet);
         bottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
 
+        fab=(FloatingActionButton) findViewById((R.id.fab2));
+        fab=(FloatingActionButton) findViewById((R.id.fab2));
         rb=(RatingBar)findViewById(R.id.ratingBar);
         address = (TextView)findViewById(R.id.address);
         spinBar = (ProgressBar) findViewById(R.id.spinBar);
@@ -200,6 +204,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         if(bottomSheetBehavior.getState() == 4) {
             bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
             PakiDao pakidao = new PakiDao();
+            fab.setVisibility(View.GONE);
 
             if (idpaki != 0) {
                 pakidao.getFeedback(idpaki, this);
@@ -207,6 +212,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
         else if(bottomSheetBehavior.getState() == 3)
             bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+            fab.setVisibility(View.VISIBLE);
+
 
 
 
