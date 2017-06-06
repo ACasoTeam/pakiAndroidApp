@@ -40,9 +40,11 @@ public class GetFeedback extends AsyncTask<String, Void, Void> {
     BufferedReader reader = null;
 
     Context context;
+    int idPaki;
 
-    public GetFeedback(Context activity) {
+    public GetFeedback(Context activity, int idPaki) {
         this.context = activity;
+        this.idPaki = idPaki;
 
     }
 
