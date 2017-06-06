@@ -12,28 +12,28 @@ public class FeedActivity extends AppCompatActivity {
 
     TextView title;
     RatingBar rating;
+    private int userID;
+    private int pakiID;
 
-    private int oid;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_feed);
 
         Intent i=getIntent();
-        int paki= i.getIntExtra("oid",-1);
+        this.pakiID= i.getIntExtra("pakiID",-1);
         String name=i.getStringExtra("name");
         int rate=i.getIntExtra("rate",0);
+        this.userID = i.getIntExtra("userID",-1);
 
-        Log.v("LOG INTENT: oid", String.valueOf(oid));
+        Log.v("LOG INTENT: oid", String.valueOf(pakiID));
         Log.v("LOG INTENT: name", name);
         Log.v("LOG INTENT: star", String.valueOf(rate));
 
-        if(paki==-1){
+        if(pakiID==-1){
 
             finish();
         }
-
-        this.oid=paki;
 
         title = (TextView) findViewById(R.id.title);
         title.setText(name);
@@ -57,14 +57,13 @@ public class FeedActivity extends AppCompatActivity {
         String feedback = text.getText().toString();
         int rate = (int) rating.getRating();
 
-        Log.v("SEND FEEDBACK: oid",""+oid);
+        Log.v("SEND FEEDBACK: oid",""+this.pakiID);
         Log.v("SEND FEEDBACK: feed",feedback);
         Log.v("SEND FEEDBACK: rate",rate+"");
 
         FeedbackDao fd = new FeedbackDao();
-        int idUser = 1;
 
-        if(fd.sendFeedback(oid,feedback,rate,idUser,this)){
+        if(fd.sendFeedback(this.pakiID,feedback,rate,this.userID,this)){
             Log.v("SEND FEEDBACK:","SUCCESS");
         }else{
             Log.v("SEND FEEDBACK:","FAIL");
