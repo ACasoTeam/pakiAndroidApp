@@ -7,11 +7,13 @@ import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.Transformation;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RatingBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -26,10 +28,13 @@ import acasoteam.pakistapp.Utility.SingleComment;
 public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.SingleCommentViewHolder>  {
 
 
+
     public static class SingleCommentViewHolder extends RecyclerView.ViewHolder   {
         TextView name;
         RatingBar rb;
+        RatingBar rb2; // rating bar per inserire il voto
         TextView comment;
+
 
         SingleCommentViewHolder(View itemView) {
             super(itemView);
@@ -37,6 +42,8 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.SingleCo
             name = (TextView)itemView.findViewById(R.id.username);
             rb = (RatingBar)itemView.findViewById(R.id.userRate);
             comment = (TextView) itemView.findViewById(R.id.comment);
+            rb2 = (RatingBar)itemView.findViewById(R.id.ratingBar2);
+
         }
 
     }
@@ -44,6 +51,8 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.SingleCo
     public List<SingleComment> singlecomments;
     int dimStart = -1;
     int targetHeight;
+    private int pakiID;
+    private int userID;
 
     Context context;
     public CommentAdapter(List<SingleComment> singlecomments, Context context){
@@ -66,7 +75,17 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.SingleCo
 
         SingleCommentViewHolder pvh;
         if (i == 0){
+
+
+
             View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.add_rating_comment, viewGroup, false);
+            Log.v("RATINGBARR",v.toString());
+            LinearLayout l = (LinearLayout) v;
+            Log.v("RATINGBARR - viewid",l.getId()+" "+ l.getChildCount());
+            for(int ii=0; ii< l.getChildCount();ii++){
+                View child = l.getChildAt(ii);
+                Log.v("RATINGBARR - childid",child.getId()+"");
+            }
             pvh = new SingleCommentViewHolder(v);
         } else {
             View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.user_comment_row, viewGroup, false);
@@ -96,6 +115,20 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.SingleCo
             singleCommentViewHolder.name.setText(singlecomments.get(i).getName());
             singleCommentViewHolder.rb.setRating(singlecomments.get(i).getRate());
             singleCommentViewHolder.comment.setText(singlecomments.get(i).getComment());
+        }else{
+            /*
+            singleCommentViewHolder.rb2.setOnTouchListener(new View.OnTouchListener() {
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+                    if (event.getAction() == MotionEvent.ACTION_UP) {
+                        // TODO perform your action here
+
+                    }
+                    return true;
+                }
+
+            });*/
+
         }
     }
 
@@ -103,6 +136,7 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.SingleCo
     public int getItemCount() {
         return singlecomments.size();
     }
+
 
 
 
