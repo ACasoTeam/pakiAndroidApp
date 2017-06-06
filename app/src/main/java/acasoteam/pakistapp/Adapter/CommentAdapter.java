@@ -116,6 +116,7 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.SingleCo
             singleCommentViewHolder.rb.setRating(singlecomments.get(i).getRate());
             singleCommentViewHolder.comment.setText(singlecomments.get(i).getComment());
         }else{
+            /*
             singleCommentViewHolder.rb2.setOnTouchListener(new View.OnTouchListener() {
                 @Override
                 public boolean onTouch(View v, MotionEvent event) {
@@ -126,7 +127,7 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.SingleCo
                     return true;
                 }
 
-            });
+            });*/
 
         }
     }
