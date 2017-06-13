@@ -226,29 +226,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         return true;
     }
 
-    public void showBottomSheet(View v) {
-
-        if(bottomSheetBehavior.getState() == 4) {
-            bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
-            PakiDao pakidao = new PakiDao();
-            fab.setVisibility(View.GONE);
-            Log.v("bottomSheet: ", "STATE_COLLAPSED");
-
-            if (idpaki != 0) {
-                pakidao.getFeedback(idpaki, this);
-            }
-        }
-        else if(bottomSheetBehavior.getState() == 3){
-            bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
-            fab.setVisibility(View.VISIBLE);
-        }
-    }
-
-
-
-
-
-
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data)
     {
