@@ -1,6 +1,7 @@
 package acasoteam.pakistapp;
 
 import android.Manifest;
+import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -11,6 +12,8 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Build;
+import android.support.annotation.NonNull;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.os.Bundle;
@@ -115,8 +118,11 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         bottomSheetBehavior = BottomSheetBehavior.from(llBottomSheet);
         bottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
 
-        fab=(FloatingActionButton) findViewById((R.id.fab2));
-        fab=(FloatingActionButton) findViewById((R.id.fab2));
+        fab=(FloatingActionButton) findViewById((R.id.fab2)); //goToNearest
+        //fab=(FloatingActionButton) findViewById((R.id.fab)); //report
+
+
+
         rb=(RatingBar)findViewById(R.id.ratingBar);
         address = (TextView)findViewById(R.id.address);
         spinBar = (ProgressBar) findViewById(R.id.spinBar);
@@ -166,6 +172,29 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         mapFragment.getMapAsync(this);
 
 
+        bottomSheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
+            @Override
+            public void onStateChanged(@NonNull View llBottomSheet, int newState) {
+                if (newState == BottomSheetBehavior.STATE_DRAGGING) {
+                    fab.setVisibility(View.GONE);
+                    //bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+                    Log.v ("bottomSheet: ", "" + newState);
+                }
+                else if (newState == BottomSheetBehavior.STATE_SETTLING) {
+                    //fab.setVisibility(View.GONE);
+                    //bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+                    Log.v ("bottomSheet: ", "" + newState);
+                }
+            }
+
+            @Override
+            public void onSlide(@NonNull View llBottomSheet, float slideOffset) {
+                Log.v ("bottomSheet: ", "onSlide");
+
+            }
+        });
+
+
     }
 
 
@@ -205,6 +234,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
             PakiDao pakidao = new PakiDao();
             fab.setVisibility(View.GONE);
+            Log.v("bottomSheet: ", "STATE_COLLAPSED");
 
             if (idpaki != 0) {
                 pakidao.getFeedback(idpaki, this);
@@ -213,11 +243,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         else if(bottomSheetBehavior.getState() == 3)
             bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
             fab.setVisibility(View.VISIBLE);
-
-
-
-
     }
+
+
 
 
 
