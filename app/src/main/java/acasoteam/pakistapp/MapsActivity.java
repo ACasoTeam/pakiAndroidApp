@@ -99,6 +99,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     CommentAdapter adapter;
     AccessToken accessToken;
     FloatingActionButton fab;
+    boolean flagFab = true;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -171,17 +173,20 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
-
         bottomSheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
             @Override
             public void onStateChanged(@NonNull View llBottomSheet, int newState) {
                 if (newState == BottomSheetBehavior.STATE_DRAGGING) {
-                    fab.setVisibility(View.GONE);
+                    //fab.setVisibility(View.GONE);
                     //bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
                     Log.v ("bottomSheet: ", "" + newState);
                 }
                 else if (newState == BottomSheetBehavior.STATE_SETTLING) {
-                    //fab.setVisibility(View.GONE);
+                    if(flagFab)
+                        fab.setVisibility(View.GONE);
+                    else fab.setVisibility(View.VISIBLE);
+                    flagFab = !flagFab;
+
                     //bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
                     Log.v ("bottomSheet: ", "" + newState);
                 }
@@ -240,9 +245,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 pakidao.getFeedback(idpaki, this);
             }
         }
-        else if(bottomSheetBehavior.getState() == 3)
+        else if(bottomSheetBehavior.getState() == 3){
             bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
             fab.setVisibility(View.VISIBLE);
+        }
     }
 
 
