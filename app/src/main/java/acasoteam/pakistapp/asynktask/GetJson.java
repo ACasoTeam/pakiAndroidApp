@@ -27,7 +27,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 import acasoteam.pakistapp.MapsActivity;
-import acasoteam.pakistapp.R;
 import acasoteam.pakistapp.entity.Paki;
 
 /**

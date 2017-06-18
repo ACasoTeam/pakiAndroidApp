@@ -26,9 +26,10 @@ public class FeedActivity extends AppCompatActivity {
         int rate=i.getIntExtra("rate",0);
         this.userID = i.getIntExtra("userID",-1);
 
-        Log.v("LOG INTENT: oid", String.valueOf(pakiID));
-        Log.v("LOG INTENT: name", name);
-        Log.v("LOG INTENT: star", String.valueOf(rate));
+        Log.v("FeedActivity", String.valueOf(pakiID));
+        Log.v("FeedActivity", name);
+        Log.v("FeedActivity", String.valueOf(rate));
+        Log.v("FeedActivity", String.valueOf(userID));
 
         if(pakiID==-1){
 

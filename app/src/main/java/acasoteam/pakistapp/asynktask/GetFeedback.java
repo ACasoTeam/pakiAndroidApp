@@ -53,7 +53,8 @@ public class GetFeedback extends AsyncTask<String, Void, Void> {
     protected void onPreExecute() {
         List<SingleComment> comments = new ArrayList<>();
         comments.add(new SingleComment("",0,""));
-        CommentAdapter adapter = new CommentAdapter(comments, context);
+        comments.add(new SingleComment("",0,""));
+        CommentAdapter adapter = new CommentAdapter(comments, true, context, idPaki);
         LinearLayoutManager llm = new LinearLayoutManager(context);
         ((MapsActivity) context).getRv().setLayoutManager(llm);
         ((MapsActivity) context).getRv().setHasFixedSize(true);
@@ -147,7 +148,7 @@ public class GetFeedback extends AsyncTask<String, Void, Void> {
                         );
                     }
 
-                    CommentAdapter adapter = new CommentAdapter(comments, context);
+                    CommentAdapter adapter = new CommentAdapter(comments, false, context, idPaki);
                     LinearLayoutManager llm = new LinearLayoutManager(context);
                     ((MapsActivity)context).getRv().setLayoutManager(llm);
                     ((MapsActivity)context).getRv().setHasFixedSize(true);

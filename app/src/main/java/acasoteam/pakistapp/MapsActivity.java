@@ -128,7 +128,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         address = (TextView)findViewById(R.id.address);
         spinBar = (ProgressBar) findViewById(R.id.spinBar);
         rv = (RecyclerView) findViewById(R.id.comments);
-        adapter = new CommentAdapter(null, this);
+
 
         rb.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener(){
 
@@ -246,6 +246,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             }
         } else {
             callbackManager.onActivityResult(requestCode, resultCode, data);
+            CommentAdapter.onActivityResultCM(requestCode, resultCode, data);
         }
 
 
@@ -701,5 +702,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         this.adapter = adapter;
     }
 
-
+    public AccessToken getAccessToken(){
+        return this.accessToken;
+    }
 }
