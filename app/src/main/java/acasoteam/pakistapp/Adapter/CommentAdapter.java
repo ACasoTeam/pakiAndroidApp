@@ -159,6 +159,7 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.SingleCo
     public void onBindViewHolder(final SingleCommentViewHolder singleCommentViewHolder, int i) {
         Log.v("CommentAdapter","onBindViewHolder");
         Log.v("CommentAdapter","i:"+i);
+        Log.v("CommentAdapter","showSpin:"+showSpin);
         final int itemType = getItemViewType(i);
 
 
@@ -166,8 +167,7 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.SingleCo
             singleCommentViewHolder.name.setText(singlecomments.get(i).getName());
             singleCommentViewHolder.rb.setRating(singlecomments.get(i).getRate());
             singleCommentViewHolder.comment.setText(singlecomments.get(i).getComment());
-        } else{
-
+        } else if (i==0) {
             singleCommentViewHolder.rb2.setOnTouchListener(new View.OnTouchListener() {
                 @Override
                 public boolean onTouch(View v, MotionEvent event) {
@@ -286,7 +286,6 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.SingleCo
                 }
 
             });
-
         }
     }
 

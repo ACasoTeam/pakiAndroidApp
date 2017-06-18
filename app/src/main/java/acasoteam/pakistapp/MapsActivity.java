@@ -564,7 +564,25 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     }
 
+    public void showBottomSheet(View v) {
 
+        if(bottomSheetBehavior.getState() == 4) {
+            bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+            PakiDao pakidao = new PakiDao();
+            //fab.setVisibility(View.GONE);
+
+            if (idpaki != 0) {
+                pakidao.getFeedback(idpaki, this);
+            }
+        }
+        else if(bottomSheetBehavior.getState() == 3)
+            bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+        //fab.setVisibility(View.VISIBLE);
+
+
+
+
+    }
 
 
     private Location getLastKnownLocation() {
