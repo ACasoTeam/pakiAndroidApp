@@ -29,10 +29,10 @@ public class FeedbackDao {
     }
 
 
-    public boolean sendFeedback (int idpaki,String feedback, int rate,int userOid, Context context){
+    public boolean sendFeedback (int idpaki, String feedback, int rate, String loginId, String name, String email, Context context){
 
 
-        String u = "https://acaso-pakistapp.rhcloud.com/UserOperation?action=addFeedback&comment="+feedback.replace(" ","%20")+"&idPaki="+idpaki+"&score="+rate+"&idUser="+userOid+"";
+        String u = "https://acaso-pakistapp.rhcloud.com/UserOperation?action=addFeedback&comment="+feedback.replace(" ","%20")+"&idPaki="+idpaki+"&score="+rate+"&loginId="+loginId+"&name="+name+"&email="+email;
 
         Log.v("TEST:",u);
 

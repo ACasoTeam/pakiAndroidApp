@@ -235,8 +235,11 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.SingleCo
                                                     Intent i=new Intent(a,FeedActivity.class);
                                                     i.putExtra("pakiID",pakiID);
                                                     i.putExtra("rate",singleCommentViewHolder.rb2.getRating());
-                                                    i.putExtra("name",((MapsActivity) a).getAddress().getText()+"");
-                                                    i.putExtra("userID",loginId);
+                                                    //i.putExtra("name",((MapsActivity) a).getAddress().getText()+"");
+
+                                                    i.putExtra("loginId",loginId);
+                                                    i.putExtra("name",name);
+                                                    i.putExtra("email",email);
                                                     a.startActivity(i);
 
 
